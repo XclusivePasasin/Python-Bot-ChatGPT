@@ -1,0 +1,10 @@
+openai
+python-dotenv
+flask
+mysql-connector-python
+langchain
+langchain_community
+fpdf
+PyPDF2
+faiss-cpu
+sentence_transformers
