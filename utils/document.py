@@ -1,6 +1,14 @@
+import PyPDF2 #librería para sacar la info del pdf
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+import openai
 from fpdf import FPDF
 from utils.database import DataBase as database_util
-import os 
+import os
+from langchain import LLMChain
+from langchain.llms import OpenAI
+from langchain.prompts import PromptTemplate
+import nlp
+
 
 class PDF(FPDF):
     
@@ -41,3 +49,61 @@ class PDF(FPDF):
     
     def read_pdf(self, output_path):
         pass
+
+
+def extract_text_Pdf(pdf_path):
+
+    with open(pdf_path, 'rb') as pdf_File:
+        
+        pdf_reader = PyPDF2.PdfFileReader(pdf_File)
+        
+        text = ""
+        
+        for num_page in range(pdf_reader.numPages):
+            page = pdf_reader.getPage(num_page)
+            text += page.extractText()
+            
+        return text
+
+def divided_text(text):
+    text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size = 900,
+            chunk_overlap = 100,
+            length_function = len
+    )
+
+    chunks = text_splitter.split_text(text)
+    return chunks
+
+
+def make_request(text, model="text-davinci-003", api_key="TU_API_KEY"):
+    openai.api_key = api_key
+    response = openai.Completion.create(
+        engine=model,
+        prompt=text,
+        max_tokens=100  # Le puse 100, porque creo que es suficiente, pero si querés le podés aumentar
+    )
+    return response.choices[0].text
+
+def text_process_for_chatgpt(text):
+    doc = nlp(text)
+    processed_text = ""
+    for sent in doc.sents:
+        processed_text += sent.text.strip() + " "
+    return processed_text.strip()
+
+# Función para procesar el texto con Langchain
+def process_with_langchain(chunks, api_key="TU_API_KEY"):
+    llm = OpenAI(api_key=api_key)
+    prompt = PromptTemplate(
+        input_variables=["chunk"],
+        template="Please, process the following text: {chunk}"
+    )
+    chain = LLMChain(llm=llm, prompt=prompt)
+    
+    processed_response = []
+    for chunk in chunks:
+        response = chain.run(chunk)
+        processed_response = text_process_for_chatgpt(response)
+        processed_response.append(processed_response)
+    return " ".join(processed_response)

@@ -26,3 +26,20 @@ class ChatGPT:
       print(f"Ups!, An error has occurred: {e}")
       return print('Ups!, An error has occurred ')
     
+
+#Te mando comentado esto, para ver si te funciona mejor esto o el que tenias vos
+# def enviar_a_chatgpt(mensaje, modelo="gpt-3.5-turbo", api_key="TU_API_KEY"):
+#     openai.api_key = api_key
+#     respuesta = openai.ChatCompletion.create(
+#         model=modelo,
+#         messages=[
+#             {"role": "system", "content": "You are a helpful assistant."},
+#             {"role": "user", "content": mensaje}
+#         ],
+#         max_tokens=150  # Ajusta según tus necesidades
+#     )
+#     return respuesta.choices[0].message['content']
+
+# # Ejemplo de uso
+# respuesta_chatgpt = enviar_a_chatgpt(mensaje_final, api_key=api_key)
+# print(respuesta_chatgpt)   
