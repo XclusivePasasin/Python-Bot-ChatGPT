@@ -8,3 +8,5 @@ fpdf
 PyPDF2
 faiss-cpu
 sentence_transformers
+spacy
+nlp
